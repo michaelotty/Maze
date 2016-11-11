@@ -8,7 +8,7 @@ typedef struct coordinate {
 }coordinate_t;
 
 typedef enum tile {
-	empty,
+	EMPTY,
 	R,
 	B,
 	BR,
@@ -26,7 +26,7 @@ typedef enum tile {
 	TLBR
 }tile_t;
 
-void CreateMaze(tile_t **maze, FILE *input, coordinate_t start, coordinate_t end, coordinate_t size);
+CreateMaze(tile_t **maze, FILE *input, coordinate_t start, coordinate_t end, coordinate_t size);
 coordinate_t GetMazeSize(FILE *input);
 
 
@@ -34,8 +34,9 @@ int main(int argc, char *argv[])
 {
 	coordinate_t startPoint = { 0, 0 }, endPoint = { 0, 0 }, mazeSize = { 0, 0 };
 	FILE *mazeFile, *outputFile;
-	int displayMaze = 0, i;
-	tile_t **maze;
+	int displayMaze = 0;
+	int i, j;
+	tile_t **maze = NULL;
 
 	switch (argc) {
 	case 0:
@@ -74,48 +75,44 @@ int main(int argc, char *argv[])
 		return ( 0 );
 		break;
 	}
-	
 	mazeSize = GetMazeSize(mazeFile);
 
-	maze = (int **)malloc(mazeSize.row * sizeof(tile_t));
+	maze = malloc(mazeSize.row * sizeof(tile_t));
 	for (i = 0; i < mazeSize.row; i++) {
-		maze[i] = (int *)malloc(mazeSize.col * sizeof(tile_t));
+		maze[i] = malloc(mazeSize.col * sizeof(tile_t));
 	}
+
 	CreateMaze(maze, mazeFile, startPoint, endPoint, mazeSize);
+	for (i = 0; i < mazeSize.row; i++) {
+		for (j = 0; j < mazeSize.col; j++) {
+			printf("%d ", maze[i][j]);
+		}
+		printf("\n");
+	}
+
+	getchar();
+
+	for (i = 0; i < mazeSize.row; i++) {
+		free(maze[i]);
+	}
+	free(maze);
 
 	fclose(mazeFile);
 	fclose(outputFile);
 	return ( 0 );
 }
 
-void CreateMaze(tile_t **maze, FILE *input, coordinate_t start, coordinate_t end, coordinate_t size)
+CreateMaze(tile_t **maze, FILE *input, coordinate_t start, coordinate_t end, coordinate_t size)
 {
 	int i, j;
+	fscanf(input, "%d %d", &start.row, &start.col);
+	fscanf(input, "%d %d", &end.row, &end.col);
 
-	fscanf(input, "%d", start.row);
-	fscanf(input, "%d", start.col);
-	printf("%d %d", start.row, start.col);
-	getchar();
-
-	for (i = 0; i < 5; i++) {
-		for (j = 0; j < 5; j++) {
+	for (i = 0; i < size.row; i++) {
+		for (j = 0; j < size.col; j++) {
 			fscanf(input, "%d", &maze[i][j]);
 		}
 	}
-
-	for (i = 0; i < 5; i++) {
-		for (j = 0; j < 5; j++) {
-			printf("%d", &maze[i][j]);
-		}
-		printf("\n");
-	}
-	
-	
-	//printf("%d", sizeof(input));
-	
-	
-	//fprintf(input, "%d, %d, %d, %d, %d");
-	getchar();
 }
 
 coordinate_t GetMazeSize(FILE *input)
