@@ -26,9 +26,11 @@ typedef enum tile {
 	TLBR
 }tile_t;
 
-CreateMaze(tile_t **maze, FILE *input, coordinate_t start, coordinate_t end, coordinate_t size);
+void CreateMaze(tile_t **maze, FILE *input, coordinate_t start, coordinate_t end, coordinate_t size);
 coordinate_t GetMazeSize(FILE *input);
-
+void ExportSolution(FILE *output, char *solution);
+char *CalculateSolution(tile_t **maze, coordinate_t start, coordinate_t end);
+int CalculateDistance(coordinate_t start, coordinate_t end);
 
 int main(int argc, char *argv[])
 {
@@ -60,8 +62,8 @@ int main(int argc, char *argv[])
 			displayMaze = 1;
 		}
 
-		mazeFile = fopen(argv[2], "r");
-		outputFile = fopen(argv[3], "w");
+		mazeFile = fopen(argv[2], "rt");
+		outputFile = fopen(argv[3], "wt");
 
 		if (mazeFile == NULL || outputFile == NULL) {
 			perror("File load error");
@@ -92,17 +94,20 @@ int main(int argc, char *argv[])
 
 	getchar();
 
+	fclose(mazeFile);
+
+	ExportSolution(outputFile, maze);
+
 	for (i = 0; i < mazeSize.row; i++) {
 		free(maze[i]);
 	}
 	free(maze);
 
-	fclose(mazeFile);
 	fclose(outputFile);
 	return ( 0 );
 }
 
-CreateMaze(tile_t **maze, FILE *input, coordinate_t start, coordinate_t end, coordinate_t size)
+void CreateMaze(tile_t **maze, FILE *input, coordinate_t start, coordinate_t end, coordinate_t size)
 {
 	int i, j;
 	fscanf(input, "%d %d", &start.row, &start.col);
@@ -120,4 +125,63 @@ coordinate_t GetMazeSize(FILE *input)
 	coordinate_t size;// = { 0, 0 };
 	fscanf(input, "%d %d", &size.row, &size.col);
 	return ( size );
+}
+
+char *CalculateSolution(tile_t **maze, coordinate_t start, coordinate_t end)
+{
+	char *solution;
+	coordinate_t cursor = start;
+	int bestDistance = CalculateDistance(cursor, end);
+	while (cursor.row != end.row && cursor.col != end.col) {
+		switch (maze[cursor.row][cursor.col]) {
+		case EMPTY:
+			return -1;
+			break;
+		case R:
+
+			break;
+		case B:
+			break;
+		case BR:
+			break;
+		case L:
+			break;
+		case LR:
+			break;
+		case LB:
+			break;
+		case LBR:
+			break;
+		case T:
+			break;
+		case TR:
+			break;
+		case TB:
+			break;
+		case TBR:
+			break;
+		case TL:
+			break;
+		case TLR:
+			break;
+		case TLB:
+			break;
+		case TLBR:
+			break;
+		default:
+			break;
+		}
+	}
+
+	return ( solution );
+}
+
+int CalculateDistance(coordinate_t a, coordinate_t b)
+{
+	return ( abs(b.row-a.row)+abs(b.col-a.col) );
+}
+
+void ExportSolution(FILE *output, char *solution)
+{
+	fprintf(output, "%s", solution);
 }
